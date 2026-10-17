@@ -1,0 +1,63 @@
+# ============================================
+# Net-On ISP Management Platform
+# ============================================
+
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+dist/
+.next/
+out/
+build/
+
+# Testing
+coverage/
+
+# Environment (NEVER commit secrets)
+.env
+.env.local
+.env.production
+.env.*.local
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Turbo
+.turbo/
+
+# Prisma
+apps/api/prisma/migrations/**/migration_lock.toml
+
+# Docker volumes
+postgres_data/
+redis_data/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Temporary
+tmp/
+temp/
+scratch/
+
+# Backups
+backups/
+
+# SSL certificates (never commit)
+infrastructure/nginx/ssl/*.pem
+infrastructure/nginx/ssl/*.key
+infrastructure/nginx/ssl/*.crt

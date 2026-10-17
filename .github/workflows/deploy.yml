@@ -1,0 +1,40 @@
+name: Net-On Container Deployment
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - 'v*'
+
+jobs:
+  docker-build-and-push:
+    name: Build & Publish Docker Containers
+    runs-on: ubuntu-latest
+    needs: []
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build API Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: infrastructure/docker/api.Dockerfile
+          push: false
+          tags: neton-api:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build Web Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: infrastructure/docker/web.Dockerfile
+          push: false
+          tags: neton-web:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

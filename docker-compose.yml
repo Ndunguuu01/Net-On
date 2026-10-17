@@ -1,0 +1,54 @@
+# ============================================
+# Net-On — Development Docker Compose
+# ============================================
+# Usage:
+#   docker compose up -d        (start all services)
+#   docker compose down         (stop all services)
+#   docker compose logs -f api  (follow API logs)
+# ============================================
+
+services:
+  # -------------------------------------------
+  # PostgreSQL Database
+  # -------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    container_name: neton-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: neton
+      POSTGRES_USER: neton
+      POSTGRES_PASSWORD: neton_dev_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U neton -d neton"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # -------------------------------------------
+  # Redis (Cache + Job Queue)
+  # -------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: neton-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local

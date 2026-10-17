@@ -1,0 +1,118 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Net-On Dark Theme — Premium ISP Dashboard */
+    --background: 222 47% 6%;
+    --foreground: 210 40% 96%;
+
+    --card: 222 47% 8%;
+    --card-foreground: 210 40% 96%;
+
+    --popover: 222 47% 8%;
+    --popover-foreground: 210 40% 96%;
+
+    --primary: 199 89% 48%;
+    --primary-foreground: 222 47% 6%;
+
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 96%;
+
+    --muted: 217 33% 14%;
+    --muted-foreground: 215 20% 55%;
+
+    --accent: 199 89% 48%;
+    --accent-foreground: 222 47% 6%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --success: 142 71% 45%;
+    --success-foreground: 210 40% 98%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 222 47% 6%;
+
+    --info: 199 89% 48%;
+    --info-foreground: 210 40% 98%;
+
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 199 89% 48%;
+
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  /* Custom scrollbar for dark theme */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-background;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/30 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/50;
+  }
+}
+
+@layer utilities {
+  /* Glassmorphism utilities */
+  .glass {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10;
+  }
+
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl;
+  }
+
+  /* Glow effects */
+  .glow-primary {
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.15);
+  }
+
+  .glow-success {
+    box-shadow: 0 0 20px hsl(var(--success) / 0.15);
+  }
+
+  .glow-warning {
+    box-shadow: 0 0 20px hsl(var(--warning) / 0.15);
+  }
+
+  .glow-destructive {
+    box-shadow: 0 0 20px hsl(var(--destructive) / 0.15);
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary to-cyan-400 bg-clip-text text-transparent;
+  }
+
+  /* Subtle grid background */
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, hsl(var(--border) / 0.3) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--border) / 0.3) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+}

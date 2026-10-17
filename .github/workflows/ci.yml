@@ -1,0 +1,81 @@
+name: Net-On CI
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-and-test:
+    name: Lint, Test & Build
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: neton_test
+          POSTGRES_USER: neton
+          POSTGRES_PASSWORD: test_password_123
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate --schema=apps/api/prisma/schema.prisma
+
+      - name: Validate Prisma Schema
+        run: npx prisma validate --schema=apps/api/prisma/schema.prisma
+
+      - name: Type Check Workspace
+        run: npm run type-check
+
+      - name: Lint Codebase
+        run: npm run lint
+
+      - name: Run Unit Tests
+        run: npm run test --workspace=apps/api
+        env:
+          NODE_ENV: test
+          JWT_ACCESS_SECRET: test-jwt-secret-key-at-least-64-characters-for-ci-pipeline-safety!
+          JWT_REFRESH_SECRET: test-jwt-refresh-secret-key-at-least-64-characters-for-ci-pipeline!
+          ENCRYPTION_SECRET: test-encryption-secret-32-chars-long!
+          DATABASE_URL: postgresql://neton:test_password_123@localhost:5432/neton_test?schema=public
+
+      - name: Build Monorepo (Turborepo)
+        run: npm run build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:3001/api/v1
+          NODE_ENV: production
